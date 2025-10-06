@@ -16,33 +16,22 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
-
-
-        // seed roles table
-
-        Role::create([
-            'name' => 'admin',
-            'permissions' => '["create", "read", "update", "delete" ]'
+        // Run the permission seeder first
+        $this->call(PermissionSeeder::class);
+        
+        // Run the role seeder to create roles and assign permissions
+        $this->call(RoleSeeder::class);
+        
+        // Create admin user with admin role
+        $admin = User::create([
+            'fullname' => 'Admin User',
+            'username' => 'admin',
+            'email' => 'admin@gmail.com',
+            'password' => bcrypt('admin')
         ]);
-        Role::create([
-            'name' => 'manager',
-            'permissions' => '["create", "read", "update"]'
-        ]);
-        Role::create([
-            'name' => 'employee',
-            'permissions' => '["create", "read"]'
-        ]);
-        Role::create([
-            'name' => 'customer',
-            'permissions' => '["read"]'
-        ]);
-
+        
+        // Assign admin role to admin user
+        $admin->assignRole('admin');
 
         // seed categories table concerning the logistics of a company
 
@@ -64,22 +53,11 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::create([
-            'fullname' => 'Admin Ad_min MinAd',
-            'username' => 'admin',
-            'password' => '$2y$10$3imDjc04ij27tLRQdkKvluunmz3RKXJeighE0AFUzu/sLScso4KDq',
-            'phone' => '1234567890',
-            'email' => 'admin@imt.com',
-            'role' => Role::where('name', 'admin')->first()->id,
-            'special_permissions' => json_encode(["create", "read", "update", "delete"])
-
-        ]);
-        User::create([
             'fullname' => 'Abdi Farah Warsame',
             'username' => 'abdifw',
             'password' => '$2y$10$3imDjc04ij27tLRQdkKvluunmz3RKXJeighE0AFUzu/sLScso4KDq',
             'phone' => '1234567890',
             'email' => 'abdi@imt.com',
-            'role' => Role::where('name', 'manager')->first()->id,
             'special_permissions' => json_encode(["create", "read", "update", "delete"])
 
         ]);
@@ -89,7 +67,6 @@ class DatabaseSeeder extends Seeder
             'password' => '$2y$10$3imDjc04ij27tLRQdkKvluunmz3RKXJeighE0AFUzu/sLScso4KDq',
             'phone' => '4536728958',
             'email' => 'jama77@imt.com',
-            'role' => Role::where('name', 'employee')->first()->id,
             'special_permissions' => json_encode(["create", "read", "update"])
 
         ]);
@@ -99,7 +76,6 @@ class DatabaseSeeder extends Seeder
             'password' => '$2y$10$3imDjc04ij27tLRQdkKvluunmz3RKXJeighE0AFUzu/sLScso4KDq',
             'phone' => '6437289348',
             'email' => 'jklacoco@gmail.com',
-            'role' => Role::where('name', 'customer')->first()->id,
             'special_permissions' => json_encode(["create", "read"])
         ]);
 

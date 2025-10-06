@@ -16,15 +16,29 @@ return new class extends Migration
             $table->string('fullname', 100);
             $table->string('username', 25)->unique();
             $table->text('password');
-            $table->string('phone', 50);
+            $table->string('phone', 50)->nullable();
             $table->string('email', 100)->unique();
             $table->longText('additional_info')->nullable();
-            $table->unsignedBigInteger('role');
             $table->longText('special_permissions')->nullable();
             $table->longText('log')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->foreign('role')->references('id')->on('roles')->onDelete('cascade');
+        });
+
+        
+        Schema::create('password_reset_tokens', function (Blueprint $table) {
+            $table->string('email')->primary();
+            $table->string('token');
+            $table->timestamp('created_at')->nullable();
+        });
+
+        Schema::create('sessions', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->foreignId('user_id')->nullable()->index();
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->longText('payload');
+            $table->integer('last_activity')->index();
         });
     }
 
@@ -34,5 +48,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('users');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('sessions');
     }
 };

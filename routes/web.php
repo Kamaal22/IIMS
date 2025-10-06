@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Middleware\checkSession;
 use App\Models\Item;
 use Illuminate\Support\Facades\Route;
@@ -64,10 +66,12 @@ Route::get('transfer', function () {
 });
 
 
-Route::get('users', function () {
-    $title = "IIMS | Users";
-    return view('users.register', ['title' => $title]);
-})->middleware([checkSession::class]);
+// User Management Routes
+Route::middleware([checkSession::class])->group(function () {
+    Route::resource('users', UserController::class);
+    Route::resource('roles', RoleController::class);
+    Route::resource('permissions', PermissionController::class);
+});
 
 
 Route::post('new.item', [ItemController::class, "create"])->name('new.item')->middleware([checkSession::class]);
